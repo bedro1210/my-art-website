@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Script from "next/script";
 
-const DOMAIN = "https://YOUR-DOMAIN.vercel.app"; // 배포 후 실제 도메인으로 교체
+const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   title: "Choi Mijin — Korean Contemporary Artist",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
       "Oil on canvas. Sunflowers & contemporary works. Exhibited in Korea & Russia.",
     url: DOMAIN,
     siteName: "Choi Mijin",
-    images: ["/images/og-cover.jpg"], // 1200x630 추천
+    images: [`${DOMAIN}/images/og-cover.jpg`], // ← 절대 URL 권장
     type: "website",
     locale: "en_US",
   },
@@ -33,29 +33,25 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Choi Mijin — Korean Contemporary Artist",
     description: "Oil on canvas. Sunflowers & contemporary works.",
-    images: ["/images/og-cover.jpg"],
+    images: [`${DOMAIN}/images/og-cover.jpg`],
   },
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
         {children}
 
-        {/* ✅ Google Analytics (GA4) */}
+        {/* GA4는 ID 넣으면 활성화됩니다 */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
           strategy="afterInteractive"
         />
         <Script id="ga" strategy="afterInteractive">
           {`window.dataLayer=window.dataLayer||[];
-            function gtag(){dataLayer.push(arguments);} 
+            function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-XXXXXXX');`}
         </Script>
