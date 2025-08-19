@@ -275,28 +275,17 @@ function Hero() {
   const first = ARTWORKS[0];
   const aspect = first?.aspect ?? "4/3";
   const fit = first?.fit ?? "cover";
+
+  // "4/3" -> "4 / 3" 로 바꿔 CSS aspect-ratio에 넣기
+  const aspectStyle = { aspectRatio: aspect.replace("/", " / ") };
+
   return (
     <section className="max-w-6xl mx-auto px-4 pt-10 pb-12 grid md:grid-cols-2 gap-8 items-center">
-      <div>
-        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-          {PROFILE.nameEn} <span className="text-gray-500 font-semibold">({PROFILE.nameKo})</span>
-        </h2>
-        <p className="mt-3 text-gray-700">{PROFILE.tagline}</p>
-        <ul className="mt-5 text-sm text-gray-700 space-y-1">
-          <li className="flex items-center gap-2"><Palette className="size-4" /> {PROFILE.degree}</li>
-          <li className="flex items-center gap-2"><ExternalLink className="size-4" /> {PROFILE.shows}</li>
-          <li className="flex items-center gap-2"><MapPin className="size-4" /> {PROFILE.location}</li>
-        </ul>
-        <div className="mt-6 flex gap-3">
-          <a href="/contact" className="rounded-2xl bg-gray-900 text-white px-4 py-2 text-sm hover:opacity-90">
-            Contact for Price & Availability
-          </a>
-          <a href={PROFILE.instagram} target="_blank" className="rounded-2xl border px-4 py-2 text-sm hover:bg-gray-50">
-            View Instagram
-          </a>
-        </div>
-      </div>
-      <div className={`relative aspect-[${aspect}] rounded-2xl overflow-hidden shadow-sm bg-gradient-to-br from-gray-100 to-gray-200`}>
+      {/* ...왼쪽 텍스트 생략... */}
+      <div
+        className="relative rounded-2xl overflow-hidden shadow-sm bg-gradient-to-br from-gray-100 to-gray-200"
+        style={aspectStyle}
+      >
         {first?.image ? (
           <Image
             src={first.image}
@@ -309,7 +298,9 @@ function Hero() {
             blurDataURL={first.blurDataURL}
           />
         ) : (
-          <div className="grid place-items-center w-full h-full text-gray-500 text-sm">Upload a hero artwork image</div>
+          <div className="grid place-items-center w-full h-full text-gray-500 text-sm">
+            Upload a hero artwork image
+          </div>
         )}
       </div>
     </section>
