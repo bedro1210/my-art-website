@@ -27,7 +27,7 @@ type AwardItem = { year: string; text: string };
 /* =========================
  * Constants
  * =======================*/
-const DOMAIN = "https://YOUR-DOMAIN.vercel.app";
+const DOMAIN = process.env.NEXT_PUBLIC_SITE_URL || "https://choimijinstudio.com";
 const IMG_BASE = "/wm"; // public/wm 폴더 기준
 
 // 상단 PROFILE 상수 교체
@@ -246,81 +246,52 @@ const AWARDS: AwardItem[] = [
  * =======================*/
 function Header() {
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
+      <div className="max-w-6xl mx-auto px-4 py-2.5 flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <div className="size-8 rounded-xl bg-gray-900 text-white grid place-items-center font-semibold">CM</div>
           <div className="leading-tight">
-            <h1 className="text-lg font-bold">
+            <h1 className="text-[17px] font-bold">
               {PROFILE.nameEn} <span className="text-gray-500 text-base">({PROFILE.nameKo})</span>
             </h1>
-            <p className="text-sm text-gray-600">{PROFILE.tagline}</p>
+            <p className="hidden sm:block text-sm text-gray-600">{PROFILE.tagline}</p>
           </div>
         </div>
-        <nav className="flex items-center gap-2">
+        {/* 데스크탑 버튼 */}
+        <nav className="hidden sm:flex items-center gap-2">
           <a href={PROFILE.instagram} target="_blank" className="inline-flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm hover:bg-gray-50">
             <Instagram className="size-4" /> Instagram
           </a>
           <a href="/contact" className="inline-flex items-center gap-2 rounded-2xl border px-3 py-2 text-sm hover:bg-gray-50">
             <ExternalLink className="size-4" /> Contact
           </a>
-
+        </nav>
+        {/* 모바일 버튼(아이콘만) */}
+        <nav className="sm:hidden flex items-center gap-1.5">
+          <a href={PROFILE.instagram} target="_blank" className="rounded-xl border p-2 hover:bg-gray-50">
+            <Instagram className="size-4" />
+          </a>
+          <a href="/contact" className="rounded-xl border p-2 hover:bg-gray-50">
+            <ExternalLink className="size-4" />
+          </a>
         </nav>
       </div>
     </header>
   );
 }
 
+
 function Hero() {
   const first = ARTWORKS[0];
   const aspect = first?.aspect ?? "4/3";
   const fit = first?.fit ?? "cover";
 
-  // Tailwind purge 회피: 동적 class 대신 인라인 CSS aspect-ratio 사용
-  const aspectStyle =
-    aspect && aspect.includes("/")
-      ? { aspectRatio: aspect.replace("/", " / ") }
-      : { aspectRatio: "4 / 3" };
-
   return (
-    <section className="max-w-6xl mx-auto px-4 pt-10 pb-12 grid md:grid-cols-2 gap-8 items-center">
-      <div>
-        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
-          {PROFILE.nameEn}{" "}
-          <span className="text-gray-500 font-semibold">({PROFILE.nameKo})</span>
-        </h2>
-        <p className="mt-3 text-gray-700">{PROFILE.tagline}</p>
-        <ul className="mt-5 text-sm text-gray-700 space-y-1">
-          <li className="flex items-center gap-2">
-            <Palette className="size-4" /> {PROFILE.degree}
-          </li>
-          <li className="flex items-center gap-2">
-            <ExternalLink className="size-4" /> {PROFILE.shows}
-          </li>
-          <li className="flex items-center gap-2">
-            <MapPin className="size-4" /> {PROFILE.location}
-          </li>
-        </ul>
-        <div className="mt-6 flex gap-3">
-          <a
-            href="/contact"
-            className="rounded-2xl bg-gray-900 text-white px-4 py-2 text-sm hover:opacity-90"
-          >
-            Contact for Price & Availability
-          </a>
-          <a
-            href={PROFILE.instagram}
-            target="_blank"
-            className="rounded-2xl border px-4 py-2 text-sm hover:bg-gray-50"
-          >
-            View Instagram
-          </a>
-        </div>
-      </div>
-
+    // 모바일: 단일 열, 데스크탑: 2열
+    <section className="max-w-6xl mx-auto px-4 pt-4 md:pt-10 pb-8 grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+      {/* ✅ 모바일에서 먼저 보이는 히어로 이미지 (풀블리드 느낌) */}
       <div
-        className="relative rounded-2xl overflow-hidden shadow-sm bg-gradient-to-br from-gray-100 to-gray-200"
-        style={aspectStyle}
+        className={`relative aspect-[4/3] -mx-4 md:mx-0 rounded-none md:rounded-2xl overflow-hidden shadow-sm bg-gradient-to-br from-gray-100 to-gray-200 md:order-2`}
       >
         {first?.image ? (
           <Image
@@ -339,9 +310,39 @@ function Hero() {
           </div>
         )}
       </div>
+
+      {/* 텍스트 블록 */}
+      <div className="md:order-1">
+        <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight">
+          {PROFILE.nameEn} <span className="text-gray-500 font-semibold">({PROFILE.nameKo})</span>
+        </h2>
+        <p className="mt-2 md:mt-3 text-gray-700 text-[15px] md:text-base">{PROFILE.tagline}</p>
+        <ul className="mt-4 md:mt-5 text-sm text-gray-700 space-y-1.5">
+          <li className="flex items-center gap-2"><Palette className="size-4" /> {PROFILE.degree}</li>
+          <li className="flex items-center gap-2"><ExternalLink className="size-4" /> {PROFILE.shows}</li>
+          <li className="flex items-center gap-2"><MapPin className="size-4" /> {PROFILE.location}</li>
+        </ul>
+        <div className="mt-5 md:mt-6 flex flex-col sm:flex-row gap-2.5">
+          {/* 모바일=풀폭 버튼 */}
+          <a
+            href="/contact"
+            className="w-full sm:w-auto rounded-xl bg-gray-900 text-white px-4 py-3 text-sm text-center hover:opacity-90"
+          >
+            Contact for Price & Availability
+          </a>
+          <a
+            href={PROFILE.instagram}
+            target="_blank"
+            className="w-full sm:w-auto rounded-xl border px-4 py-3 text-sm text-center hover:bg-gray-50"
+          >
+            View Instagram
+          </a>
+        </div>
+      </div>
     </section>
   );
 }
+
 
 function SectionTitle({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
@@ -420,37 +421,45 @@ function LoadMoreGallery({ works, initialCount = 9, step = 6 }: { works: Work[];
       <SectionTitle title="Works" subtitle="Selected paintings and growing archive" />
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {list.map((w, i) => (
-          <article
-            key={`${w.title}-${i}`}
-            className="group rounded-2xl overflow-hidden border bg-white shadow-sm hover:shadow-md transition-shadow cursor-zoom-in"
-            onClick={() => openAt(i)}
-          >
-            <div className="relative aspect-[3/2] bg-gray-100 overflow-hidden">
-              {(() => {
-                const cardSrc = w.thumbnail ?? w.image;
-                const cardBlur = w.thumbnail ? getBlur(cardSrc) : w.blurDataURL;
-                return (
-                  <Image
-                    src={cardSrc}
-                    alt={`${w.title}, ${w.year}`}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                    placeholder={cardBlur ? "blur" : "empty"}
-                    blurDataURL={cardBlur}
-                  />
-                );
-              })()}
-            </div>
-            <div className="p-4">
-              <h4 className="font-semibold">{w.title}</h4>
-              <p className="text-sm text-gray-600 mt-1">{w.medium} · {w.size} · {w.year}</p>
-              <span className={`mt-3 inline-flex text-xs items-center gap-2 rounded-full px-2.5 py-1 border ${w.status === "Available" ? "text-emerald-600" : "text-gray-500"}`}>
-                {w.status}
-              </span>
-            </div>
-          </article>
-        ))}
+  <article
+    key={`${w.title}-${i}`}
+    className="group rounded-xl overflow-hidden border bg-white shadow-sm hover:shadow-md transition-shadow cursor-zoom-in"
+    onClick={() => openAt(i)}
+  >
+    <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+      {(() => {
+        const cardSrc = w.thumbnail ?? w.image;
+        const cardBlur = w.thumbnail ? getBlur(cardSrc) : w.blurDataURL;
+        return (
+          <Image
+            src={cardSrc}
+            alt={`${w.title}, ${w.year}`}
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            placeholder={cardBlur ? "blur" : "empty"}
+            blurDataURL={cardBlur}
+          />
+        );
+      })()}
+    </div>
+
+    <div className="p-3.5">
+      <h4 className="font-semibold text-[15px] md:text-base">{w.title}</h4>
+      <p className="text-[13px] md:text-sm text-gray-600 mt-1">
+        {w.medium} · {w.size} · {w.year}
+      </p>
+      <span
+        className={`mt-2.5 inline-flex text-[12px] items-center gap-2 rounded-full px-2.5 py-1 border ${
+          w.status === "Available" ? "text-emerald-600" : "text-gray-500"
+        }`}
+      >
+        {w.status}
+      </span>
+    </div>
+  </article>
+))}
+
       </div>
 
       {canLoadMore && (
